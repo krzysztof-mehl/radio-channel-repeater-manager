@@ -8,27 +8,27 @@ public class RadioConfiguration
     /// <summary>
     /// Represents the maximum allowed length for Name.
     /// </summary>
-    private const byte _nameMaxLength = 16;
+    public const byte NameMaxLength = 16;
 
     /// <summary>
-    /// Represents the minimum supported RxFrequency (kHz).
+    /// Represents the minimum supported RxFrequency in MHz.
     /// </summary>
-    private const uint _minRxFrequencyKhz = 30;
+    public const decimal MinRxFrequencyMhz = 0.030m;
 
     /// <summary>
-    /// Represents the maximum supported RxFrequency (kHz).
+    /// Represents the maximum supported RxFrequency in MHz.
     /// </summary>
-    private const uint _maxRxFrequencyKhz = 10_500_000;
+    public const decimal MaxRxFrequencyMhz = 10_500.0m;
 
     /// <summary>
-    /// Represents the minimum supported TxFrequency (kHz).
+    /// Represents the minimum supported TxFrequency in MHz.
     /// </summary>
-    private const uint _minTxFrequencyKhz = _minRxFrequencyKhz;
+    public const decimal MinTxFrequencyMhz = MinRxFrequencyMhz;
 
     /// <summary>
-    /// Represents the maximum supported TxFrequency (kHz).
+    /// Represents the maximum supported TxFrequency in MHz.
     /// </summary>
-    private const uint _maxTxFrequencyKhz = _maxRxFrequencyKhz;
+    public const decimal MaxTxFrequencyMhz = MaxRxFrequencyMhz;
 
     /// <summary>
     /// Represents available transmit power levels, including the default option
@@ -56,7 +56,6 @@ public class RadioConfiguration
     /// Represents standard CTCSS tones used for analog squelch signaling.
     /// </summary>
     public static IReadOnlyList<decimal> CtcssTones { get; } = [67.0m, 69.3m, 71.9m, 74.4m, 77.0m, 79.7m, 82.5m, 85.4m, 88.5m, 91.5m, 94.8m, 97.4m, 100.0m, 103.5m, 107.2m, 110.9m, 114.8m, 118.8m, 123.0m, 127.3m, 131.8m, 136.5m, 141.3m, 146.2m, 150.0m, 151.4m, 156.7m, 159.8m, 162.2m, 165.5m, 167.9m, 171.3m, 173.8m, 177.3m, 179.9m, 183.5m, 186.2m, 189.9m, 192.8m, 196.6m, 199.5m, 203.5m, 206.5m, 210.7m, 218.1m, 225.7m, 229.1m, 233.6m, 241.8m, 250.3m, 254.1m];
-    //public static IReadOnlyList<uint> CtcssTones { get; } = [670, 693, 719, 744, 770, 797, 825, 854, 885, 915, 948, 974, 1000, 1035, 1072, 1109, 1148, 1188, 1230, 1273, 1318, 1365, 1413, 1462, 1500, 1514, 1567, 1598, 1622, 1655, 1679, 1713, 1738, 1773, 1799, 1835, 1862, 1899, 1928, 1966, 1995, 2035, 2065, 2107, 2181, 2257, 2291, 2336, 2418, 2503, 2541];
 
     /// <summary>
     /// Represents the name of the radio configuration, can be empty.
@@ -70,9 +69,9 @@ public class RadioConfiguration
 
             value = value.TrimEnd();
 
-            if (value.Length > _nameMaxLength)
+            if (value.Length > NameMaxLength)
             {
-                throw new ArgumentException($"Name must be at most {_nameMaxLength} characters long. Actual value: '{value}'.", nameof(Name));
+                throw new ArgumentException($"Name must be at most {NameMaxLength} characters long. Actual value: '{value}'.", nameof(Name));
             }
 
             if (!StringUtilities.IsPrintableString(value))
@@ -85,32 +84,32 @@ public class RadioConfiguration
     } = string.Empty;
 
     /// <summary>
-    /// Represents the receive frequency (kHz). A <see langword="null"/> value means receive is disabled.
+    /// Represents the receive frequency in MHz. A <see langword="null"/> value means receive is disabled.
     /// </summary>
     public decimal? RxFrequency
     {
         get;
         set
         {
-            if (!IsFrequencyInRangeOrNull(value, _minRxFrequencyKhz, _maxRxFrequencyKhz))
+            if (!IsFrequencyInRangeOrNull(value, MinRxFrequencyMhz, MaxRxFrequencyMhz))
             {
-                throw new ArgumentOutOfRangeException(nameof(RxFrequency), value, $"RxFrequency must be between {_minRxFrequencyKhz:N0} and {_maxRxFrequencyKhz:N0} kHz.");
+                throw new ArgumentOutOfRangeException(nameof(RxFrequency), value, $"RxFrequency must be between {MinRxFrequencyMhz:N6} and {MaxRxFrequencyMhz:N6} MHz.");
             }
             field = value;
         }
     } = null;
 
     /// <summary>
-    /// Represents the transmit frequency (kHz). A <see langword="null"/> value means transmit is disabled.
+    /// Represents the transmit frequency in MHz. A <see langword="null"/> value means transmit is disabled.
     /// </summary>
     public decimal? TxFrequency
     {
         get;
         set
         {
-            if (!IsFrequencyInRangeOrNull(value, _minTxFrequencyKhz, _maxTxFrequencyKhz))
+            if (!IsFrequencyInRangeOrNull(value, MinTxFrequencyMhz, MaxTxFrequencyMhz))
             {
-                throw new ArgumentOutOfRangeException(nameof(TxFrequency), value, $"TxFrequency must be between {_minTxFrequencyKhz:N0} and {_maxTxFrequencyKhz:N0} kHz.");
+                throw new ArgumentOutOfRangeException(nameof(TxFrequency), value, $"TxFrequency must be between {MinTxFrequencyMhz:N6} and {MaxTxFrequencyMhz:N6} MHz.");
             }
             field = value;
         }
