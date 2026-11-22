@@ -91,9 +91,13 @@ public class RadioConfiguration
         get;
         set
         {
-            if (!IsFrequencyInRangeOrNull(value, MinRxFrequencyMhz, MaxRxFrequencyMhz))
+            if (value is not null)
             {
-                throw new ArgumentOutOfRangeException(nameof(RxFrequency), value, $"RxFrequency must be between {MinRxFrequencyMhz:N6} and {MaxRxFrequencyMhz:N6} MHz.");
+                if (!IsFrequencyInRange((decimal)value, MinRxFrequencyMhz, MaxRxFrequencyMhz))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(RxFrequency), value, $"RxFrequency must be between {MinRxFrequencyMhz:N6} and {MaxRxFrequencyMhz:N6} MHz.");
+                }
+                value = decimal.Round((decimal)value, 6);
             }
             field = value;
         }
@@ -107,9 +111,13 @@ public class RadioConfiguration
         get;
         set
         {
-            if (!IsFrequencyInRangeOrNull(value, MinTxFrequencyMhz, MaxTxFrequencyMhz))
+            if (value is not null)
             {
-                throw new ArgumentOutOfRangeException(nameof(TxFrequency), value, $"TxFrequency must be between {MinTxFrequencyMhz:N6} and {MaxTxFrequencyMhz:N6} MHz.");
+                if (!IsFrequencyInRange((decimal)value, MinTxFrequencyMhz, MaxTxFrequencyMhz))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(TxFrequency), value, $"TxFrequency must be between {MinTxFrequencyMhz:N6} and {MaxTxFrequencyMhz:N6} MHz.");
+                }
+                value = decimal.Round((decimal)value, 6);
             }
             field = value;
         }
@@ -210,22 +218,12 @@ public class RadioConfiguration
     }
 
     /// <summary>
-    /// Determines whether an optional frequency is within the specified inclusive range.
+    /// Determines whether a frequency value is within the specified inclusive range.
     /// </summary>
-    /// <param name="frequency">The frequency to evaluate, or <see langword="null"/> to treat the value as in range.</param>
+    /// <param name="frequency">The frequency value to evaluate.</param>
     /// <param name="minFrequency">The inclusive minimum allowed frequency.</param>
     /// <param name="maxFrequency">The inclusive maximum allowed frequency.</param>
-    /// <returns><see langword="true"/> if <paramref name="frequency"/> is <see langword="null"/> or between <paramref
-    /// name="minFrequency"/> and <paramref name="maxFrequency"/>, inclusive; otherwise, <see langword="false"/>.</returns>
-    private static bool IsFrequencyInRangeOrNull(decimal? frequency, decimal minFrequency, decimal maxFrequency)
-    {
-        if (frequency.HasValue)
-        {
-            return frequency.Value >= minFrequency && frequency.Value <= maxFrequency;
-        }
-        else
-        {
-            return true;
-        }
-    }
+    /// <returns><see langword="true"/> if <paramref name="frequency"/> is between <paramref name="minFrequency"/> and
+    /// <paramref name="maxFrequency"/>, inclusive; otherwise, <see langword="false"/>.</returns>
+    private static bool IsFrequencyInRange(decimal frequency, decimal minFrequency, decimal maxFrequency) => frequency >= minFrequency && frequency <= maxFrequency;
 }
